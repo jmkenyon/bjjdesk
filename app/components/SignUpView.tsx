@@ -65,7 +65,15 @@ export const SignUpView = () => {
       toast.success("Account created successfully");
       router.push(`/gym/${gymSlug}`)
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          form.setError("gymName", {
+            message: "This gym name is already taken",
+          });
+          return;
+        }
+      }
+    
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);

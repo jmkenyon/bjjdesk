@@ -26,33 +26,30 @@ import { useState } from "react";
 const poppins = Poppins({ subsets: ["latin"], weight: ["700"] });
 
 export const SignInView = () => {
-    const router = useRouter()
-    const [isLoading, setIsLoading] = useState(false);
- 
-  
-    const onSubmit: SubmitHandler<FieldValues> = (data) => {
-      setIsLoading(true)
-      signIn("credentials", {
-        ...data,
-        redirect: false,
-      }).then((response) => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    setIsLoading(true);
+    signIn("credentials", {
+      ...data,
+      redirect: false,
+    })
+      .then((response) => {
         setIsLoading(false);
-  
+
         if (response?.ok) {
-          toast.success("Login succesful")
-          router.refresh()
-          router.push("/dashboard")
-  
+          toast.success("Login succesful");
+          router.push("/post-login");
         } else {
-          toast.error("Invalid email or password")
+          toast.error("Invalid email or password");
         }
-      }).catch(() => {
-        toast.error("Something went wrong")
-        setIsLoading(false)
       })
-    }
-
-
+      .catch(() => {
+        toast.error("Something went wrong");
+        setIsLoading(false);
+      });
+  };
 
   const form = useForm<z.infer<typeof loginSchema>>({
     mode: "all",
@@ -62,8 +59,6 @@ export const SignInView = () => {
       password: "",
     },
   });
-
-
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5">
@@ -92,9 +87,7 @@ export const SignInView = () => {
                 </Link>
               </Button>
             </div>
-            <h1 className="text-4xl font-medium">
-              Welcome back to BJJ Desk
-            </h1>
+            <h1 className="text-4xl font-medium">Welcome back to BJJ Desk</h1>
 
             <FormField
               control={form.control}
@@ -131,7 +124,7 @@ export const SignInView = () => {
               variant="elevated"
               className="bg-black text-white hover:bg-blue-600 hover:text-black mt-4"
             >
-              Log in
+              {isLoading ? "Logging in" : "Log in"}
             </Button>
           </form>
         </Form>
