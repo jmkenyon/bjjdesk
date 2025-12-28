@@ -1,33 +1,60 @@
 import Image from "next/image";
 import Navbar from "./components/Navbar";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="h-screen bg-neutral-100">
+    <main className="min-h-screen bg-neutral-100">
       <Navbar />
-      <section className="flex flex-row mt-20">
-        <div className="flex flex-col pl-20 pt-15 max-w-2xl">
-          <h2 className="text-4xl font-semibold mb-10">
-            BJJ gym management software at an affordable price
-          </h2>
-          <h3 className="text-base mb-5">
-            Become a founding member and sign up for a locked-in{" "}
-            <span className="font-bold">
-               lifetime fee of $15 a month
+
+      <section className="mx-auto flex max-w-7xl flex-col items-center gap-16 px-6 py-24 lg:flex-row">
+
+        <div className="flex max-w-xl flex-col gap-6">
+          <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+            Simple gym management software
+            <br />
+            <span className="bg-linear-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+              built for BJJ gyms
             </span>
-          </h3>
-          <h3 className="text-base">
-            Try it out today with out{" "}
-            <span className="font-bold">30-day free trial!</span>
-          </h3>
+          </h1>
+
+          <p className="text-lg text-neutral-600">
+            Manage memberships, attendance, and payments without spreadsheets,
+            WhatsApp chaos, or overpriced software.
+          </p>
+
+          <p className="text-base text-neutral-700">
+            Become a founding member and lock in a{" "}
+            <span className="font-semibold">
+              lifetime price of $15/month
+            </span>{" "}
+            — includes a 30-day free trial.
+          </p>
+
+ 
+          <div className="mt-4 flex items-center gap-4">
+            <Link
+              href="/free-trial"
+              className="rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-blue-600"
+            >
+              Start free trial
+            </Link>
+
+
+          </div>
         </div>
-        <div className="px-20 ">
+
+
+        <div className="relative w-full max-w-xl">
+          <div className="absolute inset-0 -z-10 rounded-3xl bg-linear-to-tr from-blue-200/40 to-transparent blur-2xl" />
+
           <Image
-            src={"/hero-image.jpg"}
-            alt="hero image"
-            className="object-cover rounded-2xl"
-            width={800}
-            height={800}
+            src="/hero-image.webp"
+            alt="BJJ Desk dashboard preview"
+            width={900}
+            height={900}
+            className="rounded-3xl object-cover shadow-2xl"
+            priority
           />
         </div>
       </section>
