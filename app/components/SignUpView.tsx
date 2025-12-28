@@ -167,7 +167,8 @@ export const SignUpView = () => {
               variant="elevated"
               className="bg-black text-white hover:bg-blue-600 mt-4"
             >
-              Start your free trial
+
+              {isLoading ? "Creating account ..." : "Start your free trial"}
             </Button>
           </form>
         </Form>
