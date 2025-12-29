@@ -14,13 +14,14 @@ export const metadata: Metadata = {
 };
 
 interface LayoutProps {
-  children: React.ReactNode;
-  params: {
-    gymSlug: string;
-  };
-}
+    children: React.ReactNode;
+    params: Promise<{
+      gymSlug: string;
+    }>;
+  }
+
 export default async function RootLayout({ children, params }: LayoutProps) {
-  const resolvedParams = await params;
+  const resolvedParams =  await params;
 
   const gym = await prisma.gym.findUnique({
     where: {
