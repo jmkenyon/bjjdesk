@@ -1,9 +1,5 @@
-import React from 'react'
-
 const page = () => {
-  return (
-    <div>page</div>
-  )
-}
+  return <main className="bg-neutral-100 h-screen"></main>;
+};
 
-export default page
+export default page;
