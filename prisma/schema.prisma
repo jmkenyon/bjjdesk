@@ -18,17 +18,28 @@ model User {
   email          String    @unique
   hashedPassword String?
   emailVerified  DateTime?
+  name           String?
   role           UserRole
+  belt           Belt?
 
-  gymId          String    @db.ObjectId
-  gym            Gym       @relation(fields: [gymId], references: [id])
+  gymId String @db.ObjectId
+  gym   Gym    @relation(fields: [gymId], references: [id])
 
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum UserRole {
-    ADMIN
+  ADMIN
+  STUDENT
+}
+
+enum Belt {
+  WHITE
+  BLUE
+  PURPLE
+  BROWN
+  BLACK
 }
 
 model Gym {
@@ -37,6 +48,18 @@ model Gym {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  qrCode    String?
 
   users     User[]
+  documents Document[]
+}
+
+model Document {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  fileUrl      String
+  gymId     String   @db.ObjectId
+  gym       Gym      @relation(fields: [gymId], references: [id])
 }

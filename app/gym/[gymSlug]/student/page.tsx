@@ -17,7 +17,7 @@ const page = async ({params}: {params: Promise<IParams>}) => {
 
     if (!gym) {
       return (
-        <EmptyState title="Gym not found" subtitle="Contact us for assistance" />
+        <EmptyState title="Gym not found" subtitle="Contact your gym for assistance" />
       )
     }
   
