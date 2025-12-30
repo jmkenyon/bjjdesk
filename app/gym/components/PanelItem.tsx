@@ -1,5 +1,6 @@
 "use client"
 
+import { generateTenantURL } from "@/app/lib/utils";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,7 +23,7 @@ const PanelItem = ({
     const active = pathname.endsWith(URLOveride ? URLOveride : title.toLowerCase())
 
   return (
-    <Link href={`/gym/${gymSlug}/admin/dashboard/${URLOveride ?? title.toLowerCase()}`}>
+    <Link href={`${generateTenantURL(gymSlug)}/admin/dashboard/${URLOveride ?? title.toLowerCase()}`}>
       <li className={cn("flex flex-row items-center gap-3 cursor-pointer transition-colors hover:bg-black hover:text-white p-5",
       active && "bg-black  font-semibold text-white/90"
 

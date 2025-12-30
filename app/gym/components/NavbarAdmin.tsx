@@ -1,6 +1,7 @@
 "use client";
 
 import NavButton from "@/app/components/NavButton";
+import { generateTenantURL } from "@/app/lib/utils";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 
@@ -12,7 +13,7 @@ interface NavbarAdminProps {
 const NavbarAdmin = ({ gymName,gymSlug }: NavbarAdminProps) => {
   return (
     <nav className="bg-white  border-b-2 border-black flex flex-row items-center justify-between">
-        <Link href={`/gym/${gymSlug}`}>
+        <Link href={`${generateTenantURL(gymSlug)}`}>
       <h1 className="text-black text-lg ml-5">{gymName}
 
       </h1>

@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { loginSchema } from "@/app/schemas/schemas";
+import { generateTenantURL } from "@/app/lib/utils";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["700"] });
 
@@ -76,7 +77,7 @@ export const LoginView = ({gymName, gymSlug, role}: LoginViewParams) => {
             className="flex flex-col gap-8 p-4 lg:p-16"
           >
             <div className="flex items-center justify-between mb-8">
-              <Link href={`/gym/${gymSlug}`}>
+              <Link href={`${generateTenantURL(gymSlug)}`}>
                 <span
                   className={cn("text-2xl font-sefmibold", poppins.className)}
                 >
@@ -89,7 +90,7 @@ export const LoginView = ({gymName, gymSlug, role}: LoginViewParams) => {
                 size="sm"
                 className="text-base border-none underline"
               >
-                <Link prefetch href={`/gym/${gymSlug}/${otherLogin.toLowerCase()}`}>
+                <Link prefetch href={`${generateTenantURL(gymSlug)}/${otherLogin.toLowerCase()}`}>
                   {otherLogin} Login
                 </Link>
               </Button>
