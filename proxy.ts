@@ -8,6 +8,11 @@ export const config = {
 export default async function middleware(req: NextRequest) {
   const hostname = req.headers.get("host") || "";
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "";
+  const pathname = req.nextUrl.pathname;
+
+  if (pathname.startsWith("/login") || pathname.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
 
   // Only handle gym subdomains
   if (!hostname.endsWith(`.${rootDomain}`)) {
