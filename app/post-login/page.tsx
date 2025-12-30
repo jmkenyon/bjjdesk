@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import prisma from "@/app/lib/prisma";
 import { redirect } from "next/navigation";
+import { generateTenantURL } from "../lib/utils";
 
 export default async function PostLogin() {
   const session = await getServerSession(authOptions);
@@ -19,5 +20,5 @@ export default async function PostLogin() {
     redirect("/login");
   }
 
-  redirect(`/gym/${gym.slug}`);
+  redirect(generateTenantURL(gym.slug))
 }
