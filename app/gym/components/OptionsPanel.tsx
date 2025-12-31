@@ -6,6 +6,8 @@ import { MdOutlineDocumentScanner } from "react-icons/md";
 import { BsQrCode } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 import { CiCreditCard1 } from "react-icons/ci";
+import { FaRegCalendarAlt } from "react-icons/fa";
+
 
 import PanelItem from "./PanelItem";
 
@@ -19,7 +21,7 @@ const OptionsPanel = ({ gymSlug }: OptionsPanelProps) => {
       <ul className="flex flex-col">
         <PanelItem title="Students" icon={PiStudent} gymSlug={gymSlug} />
         <PanelItem
-          title="Payments"
+          title="Memberships"
           icon={MdOutlinePayments}
           gymSlug={gymSlug}
         />
@@ -32,6 +34,11 @@ const OptionsPanel = ({ gymSlug }: OptionsPanelProps) => {
           title="QR drop-in"
           icon={BsQrCode}
           URLOveride="qr-code"
+          gymSlug={gymSlug}
+        />
+        <PanelItem
+          title="Classes"
+          icon={FaRegCalendarAlt}
           gymSlug={gymSlug}
         />
         <PanelItem

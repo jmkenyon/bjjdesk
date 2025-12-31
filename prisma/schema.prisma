@@ -50,8 +50,10 @@ model Gym {
   updatedAt DateTime @updatedAt
   qrCode    String?
 
-  users     User[]
-  documents Document[]
+  users      User[]
+  documents  Document[]
+  dropIn     DropIn?
+  membership Membership[]
 }
 
 model Document {
@@ -59,7 +61,32 @@ model Document {
   title     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  fileUrl      String
+  fileUrl   String
   gymId     String   @db.ObjectId
   gym       Gym      @relation(fields: [gymId], references: [id])
+  dropInId  String?  @db.ObjectId
+  dropIn    DropIn?  @relation(fields: [dropInId], references: [id])
+}
+
+model DropIn {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  fee       Int?
+  documents Document[]
+
+  gymId String @unique @db.ObjectId
+  gym   Gym    @relation(fields: [gymId], references: [id])
+}
+
+model Membership {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  price       Int
+  title       String
+  description String?
+
+  gymId String @unique @db.ObjectId
+  gym   Gym    @relation(fields: [gymId], references: [id])
 }

@@ -49,7 +49,7 @@ export const LoginView = ({gymName, gymSlug, role}: LoginViewParams) => {
   
       if (response?.ok) {
         toast.success("Login successful");
-        router.push(`/${role.toLowerCase()}/dashboard`);
+        router.push(`${generateTenantURL(gymSlug)}/${role.toLowerCase()}/dashboard`);
       } else {
         toast.error("Invalid email or password");
       }

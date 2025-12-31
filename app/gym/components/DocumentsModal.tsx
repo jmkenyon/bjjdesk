@@ -68,7 +68,7 @@ export function DocumentsModal({ gym, docs }: DocumentsModalProps) {
       );
 
       toast.success("File uploaded successfully!");
-      setOpen(false); 
+      setOpen(false);
       setFile(null);
       setTitle("");
       router.refresh();
@@ -214,7 +214,6 @@ export function DocumentsModal({ gym, docs }: DocumentsModalProps) {
           Upload waivers, policies, or agreements for students to sign.
         </p>
         <Dialog open={open} onOpenChange={setOpen}>
-
           <DialogTrigger asChild>
             <Button
               variant="outline"
@@ -264,22 +263,20 @@ export function DocumentsModal({ gym, docs }: DocumentsModalProps) {
             </form>
 
             {isUploading && (
-              <div className="mb-8">
-                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+              <div className="mt-4 w-full rounded-md border bg-white p-4">
+                <div className="mb-2 h-2 w-full overflow-hidden rounded-full bg-slate-200">
                   <div
-                    className="bg-blue-600 h-2.5 rounded-full"
+                    className="h-full rounded-full bg-slate-900 transition-all"
                     style={{ width: `${uploadProgress}%` }}
                   ></div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-600">
-                    {uploadProgress.toFixed(2)}% uploaded
-                  </p>
+                <div className="flex items-center justify-between text-sm text-slate-600">
+                  <span>{Math.round(uploadProgress)}% uploaded</span>
                   <button
                     onClick={handleCancelUpload}
-                    className="text-red-500 hover:text-red-600 transition duration-300"
+                    className="text-slate-500 hover:text-slate-900"
                   >
-                    Cancel Upload
+                    Cancel
                   </button>
                 </div>
               </div>

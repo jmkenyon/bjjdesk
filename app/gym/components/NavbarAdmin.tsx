@@ -23,7 +23,7 @@ const NavbarAdmin = ({ gymName,gymSlug }: NavbarAdminProps) => {
           className="bg-black text-white"
           onClick={() =>
             signOut({
-              callbackUrl: `/gym/${gymSlug}`,
+              callbackUrl: `${generateTenantURL(gymSlug)}`,
             })
           }
         >

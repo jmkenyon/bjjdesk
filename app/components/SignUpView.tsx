@@ -27,6 +27,7 @@ import toast from "react-hot-toast";
 import { useWatch } from "react-hook-form";
 import { slugifyGymName } from "../lib/slugify";
 import { useRouter } from "next/navigation";
+import { generateTenantURL } from "../lib/utils";
 
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["700"] });
@@ -63,7 +64,7 @@ export const SignUpView = () => {
       });
 
       toast.success("Account created successfully");
-      router.push(`/gym/${gymSlug}`)
+      router.push(`${generateTenantURL(gymSlug)}`)
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) {
