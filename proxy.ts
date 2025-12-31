@@ -40,6 +40,6 @@ export default async function proxy(req: NextRequest) {
   }
 
   return NextResponse.rewrite(
-    new URL(`${generateTenantURL(gymSlug)}/${pathname}`, req.url)
+    new URL(`/gym/${gymSlug}${pathname}`, req.url)
   );
 }
