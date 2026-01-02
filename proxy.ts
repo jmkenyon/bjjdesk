@@ -17,6 +17,12 @@ export default async function proxy(req: NextRequest) {
   }
 
   if (publicRoutes.some((p) => pathname.startsWith(p))) {
+    if (hostname.endsWith(`.${rootDomain}`)) {
+      const gymSlug = hostname.replace(`.${rootDomain}`, "");
+      return NextResponse.rewrite(
+        new URL(`/gym/${gymSlug}${pathname}`, req.url)
+      );
+    }
     return NextResponse.next();
   }
 
