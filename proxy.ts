@@ -9,7 +9,7 @@ export const config = {
 export default async function proxy(req: NextRequest) {
   const hostname = req.headers.get("host");
   const pathname = req.nextUrl.pathname;
-  const publicRoutes = ["/login", "/drop-in"];
+  const publicRoutes = ["/drop-in"];
 
 
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
@@ -37,10 +37,12 @@ export default async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  if (pathname.startsWith("/login") && token) {
-    return NextResponse.redirect(new URL("/", req.url));
+  if (pathname.startsWith("/login")) {
+    if (token) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+    return NextResponse.next();
   }
-
   if (token.gymSlug !== gymSlug) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
