@@ -1,7 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
-
 export const config = {
   matcher: ["/((?!api/|_next/|_static/|_vercel|media/|[\\w-]+\\.\\w+).*)"],
 };
@@ -11,14 +10,13 @@ export default async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const publicRoutes = ["/drop-in"];
 
-
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
 
   if (!hostname || !rootDomain) {
     return NextResponse.next();
   }
 
-  if (publicRoutes.some(p => pathname.startsWith(p))) {
+  if (publicRoutes.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
@@ -43,11 +41,17 @@ export default async function proxy(req: NextRequest) {
     }
     return NextResponse.next();
   }
+
+  if (pathname === "/admin") {
+    if (token) {
+      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+    }
+    return NextResponse.next();
+  }
+
   if (token.gymSlug !== gymSlug) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return NextResponse.rewrite(
-    new URL(`/gym/${gymSlug}${pathname}`, req.url)
-  );
+  return NextResponse.rewrite(new URL(`/gym/${gymSlug}${pathname}`, req.url));
 }
