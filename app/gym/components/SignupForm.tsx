@@ -27,7 +27,8 @@ import { DOBPicker } from "./DOBPicker";
 import { RequiredLabel } from "@/app/lib/helpers";
 import { CountryDropdown } from "@/components/ui/country-dropdown";
 import { Membership } from "@prisma/client";
-import MembershipCard from "./MembershipCard";
+
+
 
 interface SignupFormProps {
   memberships: Membership[];
@@ -365,10 +366,65 @@ const SignupForm = ({ memberships }: SignupFormProps) => {
         <section className="shadow-sm border bg-white p-10 rounded-lg">
           <h2 className="text-xl font-bold mb-6">Membership</h2>
 
+          <FormField
+  control={form.control}
+  name="membershipId"
+  rules={{ required: "Please select a membership" }}
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>
+        <RequiredLabel>Choose a membership</RequiredLabel>
+      </FormLabel>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {memberships.map((membership) => {
+          const selected = field.value === membership.id;
+
+          return (
+            <button
+              key={membership.id}
+              type="button"
+              onClick={() => field.onChange(membership.id)}
+              className={`
+                rounded-lg border p-5 text-left transition
+                cursor-pointer
+                ${selected 
+                  ? "border-black bg-slate-50 ring-2 ring-black"
+                  : "hover:border-slate-400"
+                }
+              `}
+            >
+              <h3 className="text-lg font-semibold">
+                {membership.title}
+              </h3>
+
+              {membership.description && (
+                <p className="mt-1 text-sm text-slate-600">
+                  {membership.description}
+                </p>
+              )}
+
+              <div className="mt-4 text-xl font-bold">
+                ${membership.price}
+                <span className="text-sm font-normal text-slate-500">
+                  / month
+                </span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+  
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+            
+         
+ 
+
           
-            <div className="flex flex-col items-center gap-4 rounded-md border bg-slate-50 p-6">
-              <MembershipCard memberships={memberships} />
-            </div>
+        
           
         </section>
       </form>

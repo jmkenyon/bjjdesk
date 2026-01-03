@@ -29,7 +29,7 @@ const page = async ({ params }: { params: Promise<IParams> }) => {
     orderBy: { createdAt: "desc" },
   });
 
-  return <DocumentsModal gym={gym} docs={docs} />;
+  return <DocumentsModal gym={gym} />;
 };
 
 export default page;
