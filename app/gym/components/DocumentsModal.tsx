@@ -131,13 +131,14 @@ export function DocumentsModal({ gym, docs }: DocumentsModalProps) {
     });
   };
 
-  const handleDownload = async (key: string) => {
+  const handleDownload = async (documentId: string) => {
     try {
       const response = await fetch("/api/files", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key }),
+        body: JSON.stringify({ documentId }),
       });
+
       const { signedUrl } = await response.json();
       window.open(signedUrl, "_blank");
     } catch (error) {
@@ -145,14 +146,14 @@ export function DocumentsModal({ gym, docs }: DocumentsModalProps) {
       toast.error("Error downloading file");
     }
   };
-
-  const handleDelete = async (key: string, id: string) => {
+  const handleDelete = async (documentId: string) => {
     try {
       await fetch("/api/files", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key, id }),
+        body: JSON.stringify({ documentId }),
       });
+
       toast.success("File deleted successfully!");
       router.refresh();
     } catch (error) {
@@ -189,18 +190,13 @@ export function DocumentsModal({ gym, docs }: DocumentsModalProps) {
 
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() =>
-                      document.fileUrl && handleDownload(document.fileUrl)
-                    }
+                    onClick={() => handleDownload(document.id)}
                     className="cursor-pointer text-sm text-blue-600 hover:underline"
                   >
                     Download
                   </button>
                   <button
-                    onClick={() =>
-                      document.fileUrl &&
-                      handleDelete(document.fileUrl, document.id)
-                    }
+                    onClick={() => handleDelete(document.id)}
                     className="cursor-pointer text-sm text-red-600 hover:underline"
                   >
                     Delete
