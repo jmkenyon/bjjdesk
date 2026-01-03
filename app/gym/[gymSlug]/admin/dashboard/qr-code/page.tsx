@@ -39,9 +39,9 @@ const Page = async ({ params }: { params: Promise<IParams> }) => {
   const dropInDocIds = dropIn?.documents.map(doc => doc.id);
 
   return (
-    <section className="mt-10 rounded-lg border bg-white p-6 shadow-sm">
+   
       <QrView gym={gym} docs={docs} dropIn={dropIn} dropInDocIds={dropInDocIds}/>
-    </section>
+  
   );
 };
 

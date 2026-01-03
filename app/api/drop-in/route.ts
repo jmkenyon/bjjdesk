@@ -1,23 +1,39 @@
 import prisma from "@/app/lib/prisma";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function POST(req: Request) {
-  const { fee, documents, gymId, gymSlug } = await req.json();
+  const session = await getServerSession(authOptions);
 
-  const documentIds = Array.isArray(documents) ? documents : [documents];
+  if (!session || session.user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { fee, documents } = await req.json();
+
+  const gym = await prisma.gym.findUnique({
+    where: { id: session.user.gymId },
+    select: { id: true, slug: true },
+  });
+
+  if (!gym) {
+    return NextResponse.json({ error: "Gym not found" }, { status: 404 });
+  }
+
+  const documentIds = Array.isArray(documents) ? documents : [];
 
   try {
     await prisma.dropIn.create({
       data: {
         fee: Number(fee),
-        gymId,
-         qrCode: `https://${gymSlug}.bjjdesk.com/drop-in`,
+        gymId: gym.id,
+        qrCode: `https://${gym.slug}.bjjdesk.com/drop-in`,
         documents: {
           connect: documentIds.map((id: string) => ({ id })),
         },
       },
     });
-
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -28,20 +44,31 @@ export async function POST(req: Request) {
     );
   }
 }
-
 export async function PUT(req: Request) {
-  const { fee, documents, gymId, dropInId } = await req.json();
+  const session = await getServerSession(authOptions);
 
-  const documentIds = Array.isArray(documents) ? documents : [documents];
+  if (!session || session.user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { fee, documents, dropInId } = await req.json();
+
+  const dropIn = await prisma.dropIn.findUnique({
+    where: { id: dropInId },
+    select: { gymId: true },
+  });
+
+  if (!dropIn || dropIn.gymId !== session.user.gymId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const documentIds = Array.isArray(documents) ? documents : [];
 
   try {
     await prisma.dropIn.update({
-      where: {
-        id: dropInId,
-      },
+      where: { id: dropInId },
       data: {
         fee: Number(fee),
-        gymId,
         documents: {
           set: documentIds.map((id: string) => ({ id })),
         },

@@ -4,10 +4,9 @@ import { PiStudent } from "react-icons/pi";
 import { MdOutlinePayments } from "react-icons/md";
 import { MdOutlineDocumentScanner } from "react-icons/md";
 import { BsQrCode } from "react-icons/bs";
-import { IoSettingsOutline } from "react-icons/io5";
 import { CiCreditCard1 } from "react-icons/ci";
 import { FaRegCalendarAlt } from "react-icons/fa";
-
+import { IoMdInformationCircleOutline } from "react-icons/io";
 
 import PanelItem from "./PanelItem";
 
@@ -41,15 +40,16 @@ const OptionsPanel = ({ gymSlug }: OptionsPanelProps) => {
           icon={FaRegCalendarAlt}
           gymSlug={gymSlug}
         />
-        <PanelItem
-          title="Gym Settings"
-          URLOveride="settings"
-          icon={IoSettingsOutline}
-          gymSlug={gymSlug}
-        />
+
         <PanelItem
           title="Subscription"
           icon={CiCreditCard1}
+          gymSlug={gymSlug}
+        />
+        <PanelItem
+          title="Gym info"
+          URLOveride="information"
+          icon={IoMdInformationCircleOutline}
           gymSlug={gymSlug}
         />
       </ul>

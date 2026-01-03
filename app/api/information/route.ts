@@ -3,23 +3,25 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 
-export async function POST(req: Request) {
+export async function PUT(req: Request) {
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const { title, dayOfWeek, startTime, duration } = await req.json();
+  const { about, address, currency, freeTrial } = await req.json();
 
-    await prisma.class.create({
+  try {
+    await prisma.gym.update({
+      where: {
+        id: session.user.gymId,
+      },
       data: {
-        title,
-        dayOfWeek,
-        startTime,
-        duration: Number(duration),
-        gymId: session.user.gymId, // 🔐 secure
+        about,
+        address,
+        currency,
+        freeTrial,
       },
     });
 

@@ -1,10 +1,18 @@
 import prisma from "@/app/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    const { name, email, belt, gymId } = await req.json();
+    const { name, email, belt } = await req.json();
 
     await prisma.user.create({
       data: {
@@ -12,16 +20,12 @@ export async function POST(req: Request) {
         email,
         belt,
         role: "STUDENT",
-        gym: {
-          connect: {
-            id: gymId,
-          },
-        },
+        gymId: session.user.gymId, // 🔐 never trust client gymId
       },
     });
+
     return NextResponse.json({ success: true });
   } catch (error) {
-
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return NextResponse.json(

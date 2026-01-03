@@ -1,43 +1,75 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { listFiles, getSignedUrlForDownload, deleteFile } from '@/app/lib/r2'
-import prisma from "@/app/lib/prisma"
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import prisma from "@/app/lib/prisma";
+import { getSignedUrlForDownload, deleteFile } from "@/app/lib/r2";
 
+/**
+ * GET — optional: list documents for the current gym
+ * (recommended instead of listing raw R2 files)
+ */
 export async function GET() {
-  try {
-    const files = await listFiles()
-    return NextResponse.json(files)
-  } catch (error) {
-    console.log(error)
-    return NextResponse.json({ error: 'Error listing files' }, { status: 500 })
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const documents = await prisma.document.findMany({
+    where: { gymId: session.user.gymId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return NextResponse.json(documents);
 }
 
-export async function POST(request: NextRequest) {
-  const { key } = await request.json()
+/**
+ * POST — generate signed download URL
+ */
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  const { documentId } = await req.json();
 
-  try {
-    const signedUrl = await getSignedUrlForDownload(key)
-    return NextResponse.json({ signedUrl })
-  } catch (error) {
-    console.log(error)
-    return NextResponse.json(
-      { error: 'Error generating download URL' },
-      { status: 500 }
-    )
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const document = await prisma.document.findUnique({
+    where: { id: documentId },
+    select: { fileUrl: true, gymId: true },
+  });
+
+  if (!document || document.gymId !== session.user.gymId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const signedUrl = await getSignedUrlForDownload(document.fileUrl);
+
+  return NextResponse.json({ signedUrl });
 }
 
-export async function DELETE(request: NextRequest) {
-  const { key, id } = await request.json()
+/**
+ * DELETE — delete file + DB record
+ */
+export async function DELETE(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  const { documentId } = await req.json();
 
-  try {
-    await deleteFile(key)
-    await prisma.document.delete({
-      where: {id}
-    })
-    return NextResponse.json({ message: 'File deleted successfully' })
-  } catch (error) {
-    console.log(error)
-    return NextResponse.json({ error: 'Error deleting file' }, { status: 500 })
+  if (!session || session.user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const document = await prisma.document.findUnique({
+    where: { id: documentId },
+    select: { fileUrl: true, gymId: true },
+  });
+
+  if (!document || document.gymId !== session.user.gymId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  await deleteFile(document.fileUrl);
+  await prisma.document.delete({ where: { id: documentId } });
+
+  return NextResponse.json({ success: true });
 }

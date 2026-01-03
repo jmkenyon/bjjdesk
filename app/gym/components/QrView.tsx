@@ -21,10 +21,10 @@ const QrView = ({ gym, docs, dropIn, dropInDocIds }: QrViewProps) => {
     contentRef: printRef,
   });
 
-  console.log(dropIn?.qrCode)
-  console.log("hello")
+
+
   return (
-    <>
+    <section className="h-full bg-neutral-100">
       <div className="mb-4">
         <h2 className="text-lg font-semibold">Drop-In Student QR Code</h2>
         <p className="mt-1 mb-2 text-sm text-slate-600 max-w-prose">
@@ -39,31 +39,34 @@ const QrView = ({ gym, docs, dropIn, dropInDocIds }: QrViewProps) => {
         />
       </div>
 
-      {!dropIn ? (
+      <section className="mt-5 rounded-lg border bg-white p-6 shadow-sm">
+        {!dropIn ? (
           <div className="flex flex-col items-center justify-center gap-3 rounded-lg border  bg-slate-50  text-center p-10">
-          <h2 className="text-base font-semibold text-slate-800">
-            Drop-in setup required
-          </h2>
-          <p className="max-w-sm text-sm text-slate-600">
-            Please save your drop-in fee and required documents before generating a QR code.
-          </p>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center gap-4 rounded-md border bg-slate-50 p-6">
-          <div ref={printRef}>
-          {dropIn.qrCode && <UserQRCode value={dropIn.qrCode} />}
+            <h2 className="text-base font-semibold text-slate-800">
+              Drop-in setup required
+            </h2>
+            <p className="max-w-sm text-sm text-slate-600">
+              Please save your drop-in fee and required documents before
+              generating a QR code.
+            </p>
           </div>
+        ) : (
+          <div className="flex flex-col items-center gap-4 rounded-md border bg-slate-50 p-6">
+            <div ref={printRef}>
+              {dropIn.qrCode && <UserQRCode value={dropIn.qrCode} />}
+            </div>
 
-          <Button
-            variant="outline"
-            className="hover:bg-black hover:text-white"
-            onClick={handlePrint}
-          >
-            Print QR Code
-          </Button>
-        </div>
-      )}
-    </>
+            <Button
+              variant="outline"
+              className="hover:bg-black hover:text-white"
+              onClick={handlePrint}
+            >
+              Print QR Code
+            </Button>
+          </div>
+        )}
+      </section>
+    </section>
   );
 };
 

@@ -11,3 +11,4 @@ export function generateTenantURL(gymSlug: string) {
 
   return `${protocol}://${gymSlug}.${domain}`;
 }
+

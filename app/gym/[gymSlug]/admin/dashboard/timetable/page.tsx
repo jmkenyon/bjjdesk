@@ -32,8 +32,8 @@ const page = async ({ params }: { params: Promise<IParams> }) => {
 
 
   return (
-    <section className="mt-5 rounded-lg border bg-white p-6 shadow-sm mb-6">
-      <div className="mb-6">
+    <section className="h-full bg-neutral-100">
+      <div className="mb-4">
         <h2 className="text-lg font-semibold">Weekly timetable</h2>
         <p className="mt-1 mb-2 max-w-prose text-sm text-slate-600">
           Update your weekly timetable here
