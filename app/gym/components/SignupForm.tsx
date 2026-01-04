@@ -29,6 +29,8 @@ import { CountryDropdown } from "@/components/ui/country-dropdown";
 import { Membership, Waiver } from "@prisma/client";
 import { Textarea } from "@/components/ui/textarea";
 import { SignaturePad } from "./SignaturePad";
+import CardPaymentMethod from "./CardPaymentMethod";
+import { Button } from "@/components/ui/button";
 
 interface SignupFormProps {
   memberships: Membership[];
@@ -41,6 +43,21 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
 
   const form = useForm<FieldValues>({
     defaultValues: {
+      firstName: "",
+      lastName: "",
+      gender: "",
+      phone: "",
+      email: "",
+      dateOfBirth: "",
+      street: "",
+      city: "",
+      postCode: "",
+      county: "",
+      country: "",
+      contactName: "",
+      contactNumber: "",
+      relationship: "",
+      membershipId: "",
       signedWaiver: false,
       signature: "",
       password: "",
@@ -282,10 +299,12 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
             <FormField
               control={form.control}
               rules={{ required: "Country is required" }}
-              name="county"
+              name="country"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Country</FormLabel>
+                  <FormLabel>
+                    <RequiredLabel>Country</RequiredLabel>
+                  </FormLabel>
                   <CountryDropdown
                     placeholder="Country"
                     defaultValue={field.value}
@@ -373,8 +392,11 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
           </div>
         </section>
 
-        <section className="shadow-sm border bg-white p-10 rounded-lg mb-10">
-          <h2 className="text-xl font-bold mb-6">Membership</h2>
+        <section className="shadow-sm border bg-white p-8 md:p-10 rounded-lg mb-10">
+          <h2 className="text-xl font-bold mb-2">Membership</h2>
+          <p className="text-sm text-slate-600 mb-6 max-w-prose">
+            Choose the membership that best fits your training goals.
+          </p>
 
           <FormField
             control={form.control}
@@ -382,11 +404,11 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
             rules={{ required: "Please select a membership" }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel className="mb-3 block">
                   <RequiredLabel>Choose a membership</RequiredLabel>
                 </FormLabel>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {memberships.map((membership) => {
                     const selected = field.value === membership.id;
 
@@ -396,55 +418,76 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
                         type="button"
                         onClick={() => field.onChange(membership.id)}
                         className={`
-                rounded-lg border p-5 text-left transition
-                cursor-pointer
-                ${
-                  selected
-                    ? "border-black bg-slate-50 ring-2 ring-black"
-                    : "hover:border-slate-400"
-                }
-              `}
+                  relative rounded-xl border p-6 text-left transition-all
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-black
+                  ${
+                    selected
+                      ? "border-black bg-slate-50 ring-2 ring-black"
+                      : "hover:border-slate-400 hover:shadow-sm"
+                  }
+                `}
                       >
-                        <h3 className="text-lg font-semibold">
-                          {membership.title}
-                        </h3>
-
-                        {membership.description && (
-                          <p className="mt-1 text-sm text-slate-600">
-                            {membership.description}
-                          </p>
-                        )}
-
-                        <div className="mt-4 text-xl font-bold">
-                          ${membership.price}
-                          <span className="text-sm font-normal text-slate-500">
-                            / month
+                        {/* Selected badge */}
+                        {selected && (
+                          <span className="absolute top-3 right-3 rounded-full bg-black px-2 py-0.5 text-xs font-medium text-white">
+                            Selected
                           </span>
+                        )}
+                        <div className="flex flex-col justify-between h-full">
+                          <h3 className="text-lg font-semibold text-slate-900 ">
+                            {membership.title}
+                          </h3>
+
+                          {membership.description && (
+                            <p className="mt-2 text-sm text-slate-600 leading-relaxed ">
+                              {membership.description}
+                            </p>
+                          )}
+
+                          <div className="mt-6 flex items-baseline gap-1">
+                            <span className="text-2xl font-bold text-slate-900">
+                              ${membership.price}
+                            </span>
+                            <span className="text-sm text-slate-500">
+                              / month
+                            </span>
+                          </div>
                         </div>
                       </button>
                     );
                   })}
                 </div>
 
-                <FormMessage />
+                <FormMessage className="mt-3" />
               </FormItem>
             )}
           />
         </section>
 
-        <section className="shadow-sm border bg-white p-10 rounded-lg mb-10">
-          <h2 className="text-xl font-bold mb-6">Waiver</h2>
+        <section className="shadow-sm border bg-white p-8 md:p-10 rounded-lg mb-10">
+          <h2 className="text-xl font-bold mb-2">Waiver</h2>
+          <p className="text-sm text-slate-600 mb-6 max-w-prose">
+            Please read and sign the waiver below before continuing.
+          </p>
 
           <FormItem>
-            <FormLabel>
-              <RequiredLabel>Waiver</RequiredLabel>
+            <FormLabel className="mb-2 block">
+              <RequiredLabel>Liability waiver</RequiredLabel>
             </FormLabel>
 
-            <Textarea
-              className="border p-3 rounded mb-4"
-              readOnly
-              value={waiver?.content}
-            />
+            {/* Waiver text */}
+            <div className="mb-6 rounded-md border bg-slate-50">
+              <Textarea
+                className="border-0 bg-transparent p-4 text-sm leading-relaxed resize-none min-h-55"
+                readOnly
+                value={waiver?.content}
+              />
+            </div>
+
+            {/* Signature */}
+
+            <p className="mb-3 text-sm font-medium text-slate-700">Signature</p>
+
             <SignaturePad
               onSign={async (signature) => {
                 form.setValue("signature", signature);
@@ -457,10 +500,13 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
           </FormItem>
         </section>
 
-        <section className="shadow-sm border bg-white p-10 rounded-lg mb-10">
-          <h2 className="text-xl font-bold mb-6">Account password</h2>
+        <section className="shadow-sm border bg-white p-8 md:p-10 rounded-lg mb-10">
+          <h2 className="text-xl font-bold mb-2">Account password</h2>
+          <p className="text-sm text-slate-600 mb-6">
+            Create a password to access your account.
+          </p>
 
-          <div className="flex flex-row gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <FormField
               control={form.control}
               name="password"
@@ -478,7 +524,7 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
                   </FormLabel>
 
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type="password" {...field} className="h-11" />
                   </FormControl>
 
                   <FormMessage />
@@ -502,7 +548,7 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
                   </FormLabel>
 
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type="password" {...field} className="h-11" />
                   </FormControl>
 
                   <FormMessage />
@@ -510,6 +556,42 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
               )}
             />
           </div>
+        </section>
+        <section className="shadow-sm border bg-white p-10 rounded-lg mb-10">
+          <h2 className="mb-4 text-xl font-bold">Payment</h2>
+          <p className="mb-6 max-w-prose text-sm text-slate-600">
+            Securely enter your payment details to complete your membership.
+          </p>
+
+          <CardPaymentMethod control={form.control} />
+        </section>
+
+        <section className="shadow-sm border bg-white p-10 rounded-lg">
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-bold">Create your account</h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Review your details and complete your sign up
+            </p>
+          </div>
+
+          <div className="flex justify-center">
+            <Button
+              type="submit"
+              variant={"elevated"}
+              className="
+        w-full max-w-md
+        bg-black text-white
+        hover:bg-blue-700
+        h-12 text-base font-semibold
+      "
+            >
+              {isLoading ? "Signing up " : "Sign up"}
+            </Button>
+          </div>
+
+          <p className="mt-4 text-center text-xs text-slate-500">
+            By signing up, you agree to the gym’s waiver and terms
+          </p>
         </section>
       </form>
     </Form>
