@@ -33,13 +33,13 @@ const page = async ({ params }: { params: Promise<IParams> }) => {
       <section className="space-y-16 px-6 py-12 lg:px-12">
         <div className="max-w-3xl mx-auto text-center space-y-4">
           <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
-            Sign up to {gym.name}
+            Free trial at {gym.name}
           </h2>
           <p className="text-base leading-relaxed text-slate-600">
             Follow the instructions below to start training!
           </p>
         </div>
-        <SignupForm memberships={memberships} waiver={waiver} gym={gym}/>
+        <SignupForm memberships={memberships} waiver={waiver} gym={gym} freeTrial={true}/>
       </section>
     </main>
   );

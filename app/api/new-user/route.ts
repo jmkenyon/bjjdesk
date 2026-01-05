@@ -12,11 +12,11 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { name, email, belt } = await req.json();
+    const { firstName, email, belt } = await req.json();
 
     await prisma.user.create({
       data: {
-        name,
+        firstName,
         email,
         belt,
         role: "STUDENT",

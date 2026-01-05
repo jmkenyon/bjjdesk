@@ -3,6 +3,8 @@ import NavbarDashboard from "../components/NavbarDashboard";
 import EmptyState from "@/app/components/EmptyState";
 import Calendar from "../components/Calendar";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { generateTenantURL } from "@/app/lib/utils";
 
 interface IParams {
   gymSlug: string;
@@ -72,7 +74,7 @@ const GymPage = async ({ params }: { params: Promise<IParams> }) => {
         {/* About */}
         <div className="max-w-3xl mx-auto text-center space-y-4">
           <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
-            About the Gym
+            About {gym.name}
           </h2>
           <p className="text-base leading-relaxed text-slate-600">
             {gym.about ||
@@ -95,14 +97,19 @@ const GymPage = async ({ params }: { params: Promise<IParams> }) => {
               <Button
                 size="lg"
                 className="rounded-xl bg-black px-8 text-white hover:bg-blue-700"
+                asChild
               >
-                Book a free trial
+                <Link href={`${generateTenantURL(gym.slug)}/free-trial`}>
+                  Book a free trial
+                </Link>
               </Button>
             ) : (
               <Button
                 size="lg"
                 className="rounded-xl bg-black px-8 text-white hover:bg-blue-700"
+                asChild
               >
+                <Link href={`${generateTenantURL(gym.slug)}/sign-up`}></Link>
                 Join now
               </Button>
             )}

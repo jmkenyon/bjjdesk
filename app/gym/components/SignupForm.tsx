@@ -23,21 +23,31 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { DOBPicker } from "./DOBPicker";
+
 import { RequiredLabel } from "@/app/lib/helpers";
 import { CountryDropdown } from "@/components/ui/country-dropdown";
-import { Membership, Waiver } from "@prisma/client";
-import { Textarea } from "@/components/ui/textarea";
-import { SignaturePad } from "./SignaturePad";
+import { Gym, Membership, Waiver } from "@prisma/client";
+
 import CardPaymentMethod from "./CardPaymentMethod";
-import { Button } from "@/components/ui/button";
+
+import PersonDetailsSection from "./PersonDetailsSection";
+import WaiverCard from "./WaiverCard";
+import SignUpCard from "./SignUpCard";
+import { generateTenantURL } from "@/app/lib/utils";
 
 interface SignupFormProps {
   memberships: Membership[];
   waiver: Waiver | null;
+  gym: Gym;
+  freeTrial?: boolean;
 }
 
-const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
+const SignupForm = ({
+  memberships,
+  waiver,
+  gym,
+  freeTrial,
+}: SignupFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -67,19 +77,24 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
-    if (!data.signedWaiver || !data.signature) {
+
+    if (waiver && (!data.signedWaiver || !data.signature)) {
       toast.error("You must sign the waiver");
       return;
     }
     try {
-      await axios.put("/api/new-user", data);
-      toast.success("Update sent");
-      router.refresh();
+      await axios.post(`/api/new-user-signup?gym=${gym.slug}`, {
+        ...data,
+        isFreeTrial: freeTrial === true,
+      });
+      toast.success("Sign up successful!");
+      router.push(`${generateTenantURL(gym.slug)}/success`);
+      
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.error ?? "Request failed");
       } else {
-        toast.error("Unexpected error");
+        toast.error("Something went wrong!");
       }
     } finally {
       setIsLoading(false);
@@ -89,136 +104,8 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <section className="shadow-sm border bg-white p-10 rounded-lg mb-10">
-          <h2 className="text-xl font-bold mb-6">Personal details</h2>
-
-          <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FormField
-              control={form.control}
-              rules={{ required: "First name is required" }}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    <RequiredLabel>First name</RequiredLabel>
-                  </FormLabel>
-
-                  <FormControl>
-                    <Input placeholder="e.g. John" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lastName"
-              rules={{ required: "Last name is required" }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    <RequiredLabel>Last name</RequiredLabel>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. Smith" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="gender"
-              rules={{ required: "Gender is required" }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    <RequiredLabel>Gender</RequiredLabel>
-                  </FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="w-45 bg-white">
-                        <SelectValue placeholder="Select a gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Gender</SelectLabel>
-                          <SelectItem value="MALE">Male</SelectItem>
-                          <SelectItem value="FEMALE">Female</SelectItem>
-                          <SelectItem value="OTHER">Other</SelectItem>
-                          <SelectItem value="OMITTED">
-                            Prefer not to say
-                          </SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              rules={{ required: "Phone number is required" }}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    <RequiredLabel>Phone number</RequiredLabel>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g. 07700 900000"
-                      {...field}
-                      type="tel"
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              rules={{ required: "Last name is required" }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    <RequiredLabel>Email</RequiredLabel>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g. johnsmith@gmail.com"
-                      {...field}
-                      type="email"
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="dateOfBirth"
-              rules={{ required: "Date of birth is required" }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    <RequiredLabel>Date of birth</RequiredLabel>
-                  </FormLabel>
-                  <FormControl>
-                    <DOBPicker value={field.value} onChange={field.onChange} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </section>
+        <PersonDetailsSection control={form.control} />
+        {/* ADDRESS SECTION */}
 
         <section className="shadow-sm border bg-white p-10 rounded-lg mb-10">
           <h2 className="text-xl font-bold mb-6">Address</h2>
@@ -392,32 +279,33 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
           </div>
         </section>
 
-        <section className="shadow-sm border bg-white p-8 md:p-10 rounded-lg mb-10">
-          <h2 className="text-xl font-bold mb-2">Membership</h2>
-          <p className="text-sm text-slate-600 mb-6 max-w-prose">
-            Choose the membership that best fits your training goals.
-          </p>
+        {!freeTrial && (
+          <section className="shadow-sm border bg-white p-8 md:p-10 rounded-lg mb-10">
+            <h2 className="text-xl font-bold mb-2">Membership</h2>
+            <p className="text-sm text-slate-600 mb-6 max-w-prose">
+              Choose the membership that best fits your training goals.
+            </p>
 
-          <FormField
-            control={form.control}
-            name="membershipId"
-            rules={{ required: "Please select a membership" }}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="mb-3 block">
-                  <RequiredLabel>Choose a membership</RequiredLabel>
-                </FormLabel>
+            <FormField
+              control={form.control}
+              name="membershipId"
+              rules={{ required: "Please select a membership" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="mb-3 block">
+                    <RequiredLabel>Choose a membership</RequiredLabel>
+                  </FormLabel>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {memberships.map((membership) => {
-                    const selected = field.value === membership.id;
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {memberships.map((membership) => {
+                      const selected = field.value === membership.id;
 
-                    return (
-                      <button
-                        key={membership.id}
-                        type="button"
-                        onClick={() => field.onChange(membership.id)}
-                        className={`
+                      return (
+                        <button
+                          key={membership.id}
+                          type="button"
+                          onClick={() => field.onChange(membership.id)}
+                          className={`
                   relative rounded-xl border p-6 text-left transition-all
                   focus:outline-none focus-visible:ring-2 focus-visible:ring-black
                   ${
@@ -426,79 +314,44 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
                       : "hover:border-slate-400 hover:shadow-sm"
                   }
                 `}
-                      >
-                        {/* Selected badge */}
-                        {selected && (
-                          <span className="absolute top-3 right-3 rounded-full bg-black px-2 py-0.5 text-xs font-medium text-white">
-                            Selected
-                          </span>
-                        )}
-                        <div className="flex flex-col justify-between h-full">
-                          <h3 className="text-lg font-semibold text-slate-900 ">
-                            {membership.title}
-                          </h3>
-
-                          {membership.description && (
-                            <p className="mt-2 text-sm text-slate-600 leading-relaxed ">
-                              {membership.description}
-                            </p>
+                        >
+                          {/* Selected badge */}
+                          {selected && (
+                            <span className="absolute top-3 right-3 rounded-full bg-black px-2 py-0.5 text-xs font-medium text-white">
+                              Selected
+                            </span>
                           )}
+                          <div className="flex flex-col justify-between h-full">
+                            <h3 className="text-lg font-semibold text-slate-900 ">
+                              {membership.title}
+                            </h3>
 
-                          <div className="mt-6 flex items-baseline gap-1">
-                            <span className="text-2xl font-bold text-slate-900">
-                              ${membership.price}
-                            </span>
-                            <span className="text-sm text-slate-500">
-                              / month
-                            </span>
+                            {membership.description && (
+                              <p className="mt-2 text-sm text-slate-600 leading-relaxed ">
+                                {membership.description}
+                              </p>
+                            )}
+
+                            <div className="mt-6 flex items-baseline gap-1">
+                              <span className="text-2xl font-bold text-slate-900">
+                                ${membership.price}
+                              </span>
+                              <span className="text-sm text-slate-500">
+                                / month
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                        </button>
+                      );
+                    })}
+                  </div>
 
-                <FormMessage className="mt-3" />
-              </FormItem>
-            )}
-          />
-        </section>
-
-        <section className="shadow-sm border bg-white p-8 md:p-10 rounded-lg mb-10">
-          <h2 className="text-xl font-bold mb-2">Waiver</h2>
-          <p className="text-sm text-slate-600 mb-6 max-w-prose">
-            Please read and sign the waiver below before continuing.
-          </p>
-
-          <FormItem>
-            <FormLabel className="mb-2 block">
-              <RequiredLabel>Liability waiver</RequiredLabel>
-            </FormLabel>
-
-            {/* Waiver text */}
-            <div className="mb-6 rounded-md border bg-slate-50">
-              <Textarea
-                className="border-0 bg-transparent p-4 text-sm leading-relaxed resize-none min-h-55"
-                readOnly
-                value={waiver?.content}
-              />
-            </div>
-
-            {/* Signature */}
-
-            <p className="mb-3 text-sm font-medium text-slate-700">Signature</p>
-
-            <SignaturePad
-              onSign={async (signature) => {
-                form.setValue("signature", signature);
-                form.setValue("signedWaiver", true);
-                toast.success("Signature captured");
-              }}
+                  <FormMessage className="mt-3" />
+                </FormItem>
+              )}
             />
-
-            <FormMessage />
-          </FormItem>
-        </section>
+          </section>
+        )}
 
         <section className="shadow-sm border bg-white p-8 md:p-10 rounded-lg mb-10">
           <h2 className="text-xl font-bold mb-2">Account password</h2>
@@ -557,42 +410,12 @@ const SignupForm = ({ memberships, waiver }: SignupFormProps) => {
             />
           </div>
         </section>
-        <section className="shadow-sm border bg-white p-10 rounded-lg mb-10">
-          <h2 className="mb-4 text-xl font-bold">Payment</h2>
-          <p className="mb-6 max-w-prose text-sm text-slate-600">
-            Securely enter your payment details to complete your membership.
-          </p>
 
-          <CardPaymentMethod control={form.control} />
-        </section>
+        {waiver && <WaiverCard waiver={waiver} form={form} />}
 
-        <section className="shadow-sm border bg-white p-10 rounded-lg">
-          <div className="text-center mb-6">
-            <h2 className="text-xl font-bold">Create your account</h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Review your details and complete your sign up
-            </p>
-          </div>
+        {!freeTrial && <CardPaymentMethod control={form.control} />}
 
-          <div className="flex justify-center">
-            <Button
-              type="submit"
-              variant={"elevated"}
-              className="
-        w-full max-w-md
-        bg-black text-white
-        hover:bg-blue-700
-        h-12 text-base font-semibold
-      "
-            >
-              {isLoading ? "Signing up " : "Sign up"}
-            </Button>
-          </div>
-
-          <p className="mt-4 text-center text-xs text-slate-500">
-            By signing up, you agree to the gym’s waiver and terms
-          </p>
-        </section>
+        <SignUpCard isLoading={isLoading} />
       </form>
     </Form>
   );

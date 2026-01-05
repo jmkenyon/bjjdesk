@@ -12,27 +12,14 @@ const EmptyState: React.FC<EmptyState> = ({
   subtitle = "The page you are looking for does not exist",
 }) => {
   return (
-    <div className="bg-neutral-100 h-screen"
-        
-    >
-     
-
-      <div
-        className="
-        flex
-        flex-col
-        gap-2
-        justify-center
-        sm:items-center
-        items-start
-         h-[60vh]
-    "
-      >
-        <h1 className="text-3xl font-semibold">{title}</h1>
-        <p className="text-lg">{subtitle}</p>
+    <div className="min-h-screen bg-neutral-100 flex items-center justify-center">
+      <div className="flex flex-col items-center text-center gap-3 px-4">
+        <h1 className="text-4xl sm:text-5xl font-semibold text-slate-900">
+          {title}
+        </h1>
+        <p className="text-lg sm:text-xl text-slate-600 max-w-md">{subtitle}</p>
       </div>
     </div>
   );
 };
-
 export default memo(EmptyState);

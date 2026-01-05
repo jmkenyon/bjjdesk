@@ -18,9 +18,31 @@ model User {
   email          String    @unique
   hashedPassword String?
   emailVerified  DateTime?
-  name           String?
-  role           UserRole
-  belt           Belt?
+
+  firstName   String?
+  lastName    String?
+  gender      Gender?
+  phone       String?
+  dateOfBirth String?
+
+  street   String?
+  city     String?
+  postCode String?
+  county   String?
+  country  String?
+
+  contactName   String?
+  contactNumber String?
+  relationship  String?
+
+  hasUsedFreeTrial Boolean    @default(false)
+  type             AccessType
+
+  role UserRole
+  belt Belt?
+
+  membershipId String?     @db.ObjectId
+  membership   Membership? @relation(fields: [membershipId], references: [id])
 
   gymId String @db.ObjectId
   gym   Gym    @relation(fields: [gymId], references: [id])
@@ -28,6 +50,25 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   signedWaivers SignedWaiver[]
+  accessPasses  AccessPass[]
+}
+
+model AccessPass {
+  id     String     @id @default(auto()) @map("_id") @db.ObjectId
+  type   AccessType
+  usedAt DateTime   @default(now())
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  gymId String @db.ObjectId
+  gym   Gym    @relation(fields: [gymId], references: [id])
+}
+
+enum AccessType {
+  FREE_TRIAL
+  DROP_IN
+  MEMBERSHIP
 }
 
 enum UserRole {
@@ -41,6 +82,13 @@ enum Belt {
   PURPLE
   BROWN
   BLACK
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  UNSPECIFIED
 }
 
 model Gym {
@@ -60,6 +108,7 @@ model Gym {
   membership    Membership[]
   classes       Class[]
   signedWaivers SignedWaiver[]
+  accessPasses  AccessPass[]
 }
 
 model Waiver {
@@ -87,8 +136,8 @@ model SignedWaiver {
   gymId String @db.ObjectId
   gym   Gym    @relation(fields: [gymId], references: [id])
 
-  @@index([userId, gymId])
   @@unique([userId, waiverId])
+  @@index([userId, gymId])
 }
 
 model DropIn {
@@ -112,6 +161,7 @@ model Membership {
 
   gymId String @db.ObjectId
   gym   Gym    @relation(fields: [gymId], references: [id])
+  users User[]
 }
 
 model Class {
