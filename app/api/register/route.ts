@@ -34,6 +34,7 @@ export async function POST(req: Request) {
           email,
           hashedPassword,
           role: "ADMIN",
+          type: "NONE"
         },
       },
     },
