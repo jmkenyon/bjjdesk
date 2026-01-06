@@ -10,7 +10,7 @@ interface NavButtonProps {
 
 const NavButton = ({children, className, onClick}: NavButtonProps) => {
   return (
-    <Button variant={"outline"} className={cn("w-40 rounded-none py-8 border-l-2 border-r-0 border-t-0 border-b-0 border-black hover:bg-blue-600 hover:text-white",
+    <Button variant={"outline"} className={cn("sm:w-40 w-22 sm:text-lg text-sm rounded-none py-8 border-l-2 border-r-0 border-t-0 border-b-0 border-black hover:bg-blue-600 hover:text-white ",
         className && className
     )}
     onClick={onClick}

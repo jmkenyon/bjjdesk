@@ -11,14 +11,37 @@ const NavbarDashboard = ({ gymName, gymSlug }: NavbarDashboardProps) => {
   return (
     <nav className="bg-white  border-b-2 border-black flex flex-row items-center justify-between">
       <Link href={`${generateTenantURL(gymSlug)}`}>
-        <h1 className="text-black font-semibold text-lg ml-5">{gymName}</h1>
+        <h1 className="text-black font-semibold sm:text-lg text-base ml-5">
+          {gymName}
+        </h1>
       </Link>
-      <div>
-        <Link href={`${generateTenantURL(gymSlug)}/student`}>
+      <div className="flex gap-2">
+        {/* Desktop */}
+        <Link
+          href={`${generateTenantURL(gymSlug)}/student`}
+          className="hidden sm:block"
+        >
           <NavButton className="bg-white text-black">Student Login</NavButton>
         </Link>
-        <Link href={`${generateTenantURL(gymSlug)}/admin`}>
+        <Link
+          href={`${generateTenantURL(gymSlug)}/admin`}
+          className="hidden sm:block"
+        >
           <NavButton className="bg-black text-white">Admin Login</NavButton>
+        </Link>
+
+        {/* Mobile */}
+        <Link
+          href={`${generateTenantURL(gymSlug)}/student`}
+          className="block sm:hidden"
+        >
+          <NavButton className="bg-white text-black">Student</NavButton>
+        </Link>
+        <Link
+          href={`${generateTenantURL(gymSlug)}/admin`}
+          className="block sm:hidden"
+        >
+          <NavButton className="bg-black text-white">Admin</NavButton>
         </Link>
       </div>
     </nav>
