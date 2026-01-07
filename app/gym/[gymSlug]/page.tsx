@@ -109,8 +109,9 @@ const GymPage = async ({ params }: { params: Promise<IParams> }) => {
                 className="rounded-xl bg-black px-8 text-white hover:bg-blue-700"
                 asChild
               >
-                <Link href={`${generateTenantURL(gym.slug)}/sign-up`}></Link>
-                Join now
+                <Link href={`${generateTenantURL(gym.slug)}/sign-up`}>
+                  Join now
+                </Link>
               </Button>
             )}
           </div>

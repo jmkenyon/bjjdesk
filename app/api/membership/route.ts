@@ -41,7 +41,7 @@ export async function PUT(req: Request) {
 
   const { title, description, price, membershipId } = await req.json();
 
-  // 🔐 Ensure membership belongs to this gym
+
   const membership = await prisma.membership.findUnique({
     where: { id: membershipId },
     select: { gymId: true },
