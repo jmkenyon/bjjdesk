@@ -8,7 +8,7 @@ export const config = {
 export default async function proxy(req: NextRequest) {
   const hostname = req.headers.get("host");
   const pathname = req.nextUrl.pathname;
-  const publicRoutes = ["/", "/drop-in", "/sign-up", "/free-trial"];
+  const publicRoutes = ["/", "/drop-in", "/sign-up", "/free-trial", "/admin", "/student"];
 
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
 
