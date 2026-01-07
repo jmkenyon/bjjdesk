@@ -15,7 +15,7 @@ const NavbarDashboard = ({ gymName, gymSlug }: NavbarDashboardProps) => {
           {gymName}
         </h1>
       </Link>
-      <div className="flex gap-2">
+      <div className="flex">
         {/* Desktop */}
         <Link
           href={`${generateTenantURL(gymSlug)}/student`}
