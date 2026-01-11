@@ -19,6 +19,9 @@ const page = async ({ params }: { params: Promise<IParams> }) => {
         where: {
           role: "STUDENT",
         },
+        include: {
+          membership: true,
+        },
         orderBy: { createdAt: "desc" },
       },
     },

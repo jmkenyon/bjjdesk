@@ -1,10 +1,11 @@
-import { User } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-export type GymWStudents = {
-  name: string;
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  slug: string;
-  users: User[];
-};
+export type GymWStudents = Prisma.GymGetPayload<{
+  include: {
+    users: {
+      include: {
+        membership: true;
+      };
+    };
+  };
+}>;

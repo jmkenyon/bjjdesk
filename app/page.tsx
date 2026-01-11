@@ -26,7 +26,7 @@ export default function Home() {
           <p className="text-base text-neutral-700">
             Become a founding member and lock in a{" "}
             <span className="font-semibold">
-              lifetime price of $15/month
+              lifetime price of £15/month
             </span>{" "}
             — includes a 30-day free trial.
           </p>

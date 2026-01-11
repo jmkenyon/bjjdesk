@@ -25,11 +25,12 @@ const PanelItem = ({
   return (
     <Link href={`${generateTenantURL(gymSlug)}/admin/dashboard/${URLOveride ?? title.toLowerCase()}`}>
       <li className={cn("flex flex-row items-center gap-3 cursor-pointer transition-colors hover:bg-black hover:text-white p-5",
-      active && "bg-black  font-semibold text-white/90"
+      active && "bg-black font-semibold text-white/90"
 
       )}>
         <Icon size={20} />
-        <p>{title}</p>
+
+        <p className="sm:block hidden">{title}</p>
       </li>
     </Link>
   );
