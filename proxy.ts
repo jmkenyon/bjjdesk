@@ -84,15 +84,11 @@ export default async function proxy(req: NextRequest) {
   }
 
   if (!token) {
-    return NextResponse.redirect(
-      new URL(`https://${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/login`)
-    );
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   if (token.gymSlug !== gymSlug) {
-    return NextResponse.redirect(
-      new URL(`https://${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/login`)
-    );
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.rewrite(
