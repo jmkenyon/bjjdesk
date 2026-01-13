@@ -14,14 +14,14 @@ export const metadata: Metadata = {
 };
 
 interface LayoutProps {
-    children: React.ReactNode;
-    params: Promise<{
-      gymSlug: string;
-    }>;
-  }
+  children: React.ReactNode;
+  params: Promise<{
+    gymSlug: string;
+  }>;
+}
 
 export default async function RootLayout({ children, params }: LayoutProps) {
-  const resolvedParams =  await params;
+  const resolvedParams = await params;
 
   const gym = await prisma.gym.findUnique({
     where: {
@@ -46,12 +46,11 @@ export default async function RootLayout({ children, params }: LayoutProps) {
   return (
     <>
       <NavbarAdmin gymName={gym.name} gymSlug={gym.slug} />
-      <div className="flex h-[calc(100vh-64px)]">
-        <OptionsPanel gymSlug={gym.slug}/>
-        <main className="flex-1 p-6 bg-neutral-100 overflow-y-auto">
-
+      <div className="flex h-[calc(100vh-64px)] overflow-hidden">
+        <OptionsPanel gymSlug={gym.slug} />
+        <main className="flex-1 p-6 bg-neutral-100 overflow-hidden">
           {children}
-          </main>
+        </main>
       </div>
     </>
   );

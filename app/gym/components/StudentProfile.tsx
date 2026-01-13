@@ -1,0 +1,248 @@
+"use client";
+
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import axios from "axios";
+import toast from "react-hot-toast";
+import Image from "next/image";
+
+interface StudentProfileFormProps {
+  user: {
+    firstName?: string | null;
+    lastName?: string | null;
+    gender?: string | null;
+    phone?: string | null;
+    dateOfBirth?: string | null;
+    street?: string | null;
+    city?: string | null;
+    postCode?: string | null;
+    county?: string | null;
+    country?: string | null;
+    contactName?: string | null;
+    contactNumber?: string | null;
+    relationship?: string | null;
+    email: string;
+    belt: string | null;
+  };
+}
+
+export const StudentProfileForm = ({ user }: StudentProfileFormProps) => {
+  const form = useForm({
+    defaultValues: {
+      firstName: user.firstName ?? "",
+      lastName: user.lastName ?? "",
+      gender: user.gender ?? "",
+      phone: user.phone ?? "",
+      dateOfBirth: user.dateOfBirth ?? "",
+      street: user.street ?? "",
+      city: user.city ?? "",
+      postCode: user.postCode ?? "",
+      county: user.county ?? "",
+      country: user.country ?? "",
+      contactName: user.contactName ?? "",
+      contactNumber: user.contactNumber ?? "",
+      relationship: user.relationship ?? "",
+      belt: user.belt ?? "WHITE"
+    },
+  });
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      await axios.patch("/api/student/profile", data);
+      toast.success("Profile updated");
+    } catch {
+      toast.error("Failed to update profile");
+    }
+  };
+
+  const BELTS = [
+    "WHITE",
+    "BLUE",
+    "PURPLE",
+    "BROWN",
+    "BLACK",
+  ] as const;
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
+        
+
+
+        {/* Personal */}
+        <section>
+          <h3 className="mb-4 text-lg font-semibold">Personal information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField name="firstName" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>First name</FormLabel>
+                <FormControl><Input {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+
+            <FormField name="lastName" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last name</FormLabel>
+                <FormControl><Input {...field} /></FormControl>
+              </FormItem>
+            )} />
+
+            <FormField name="gender" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectItem value="MALE">Male</SelectItem>
+                    <SelectItem value="FEMALE">Female</SelectItem>
+                    <SelectItem value="OTHER">Other</SelectItem>
+                    <SelectItem value="OMITTED">Prefer not to say</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )} />
+
+            <FormField name="phone" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone</FormLabel>
+                <FormControl><Input {...field} /></FormControl>
+              </FormItem>
+            )} />
+
+            <FormField name="dateOfBirth" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Date of birth</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+              </FormItem>
+            )} />
+          </div>
+        </section>
+
+        {/* Address */}
+        <section className="mt-5">
+          <h3 className="mb-4 text-lg font-semibold">Address</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField name="street" control={form.control} render={({ field }) => (
+              <FormItem><FormLabel>Street</FormLabel><Input {...field} /></FormItem>
+            )} />
+            <FormField name="city" control={form.control} render={({ field }) => (
+              <FormItem><FormLabel>City</FormLabel><Input {...field} /></FormItem>
+            )} />
+            <FormField name="postCode" control={form.control} render={({ field }) => (
+              <FormItem><FormLabel>Post code</FormLabel><Input {...field} /></FormItem>
+            )} />
+            <FormField name="county" control={form.control} render={({ field }) => (
+              <FormItem><FormLabel>County</FormLabel><Input {...field} /></FormItem>
+            )} />
+            <FormField name="country" control={form.control} render={({ field }) => (
+              <FormItem><FormLabel>Country</FormLabel><Input {...field} /></FormItem>
+            )} />
+          </div>
+        </section>
+
+        {/* Emergency contact */}
+        <section className="mt-5">
+          <h3 className="mb-4 text-lg font-semibold">Emergency contact</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FormField name="contactName" control={form.control} render={({ field }) => (
+              <FormItem><FormLabel>Name</FormLabel><Input {...field} /></FormItem>
+            )} />
+            <FormField name="contactNumber" control={form.control} render={({ field }) => (
+              <FormItem><FormLabel>Number</FormLabel><Input {...field} /></FormItem>
+            )} />
+            <FormField name="relationship" control={form.control} render={({ field }) => (
+              <FormItem><FormLabel>Relationship</FormLabel><Input {...field} /></FormItem>
+            )} />
+          </div>
+        </section>
+
+        <section className="space-y-4 mt-5">
+  <h3 className="text-lg font-semibold">Belt</h3>
+
+  {/* Current belt preview */}
+  <div className="flex items-center gap-4 rounded-lg border p-4">
+    <Image
+      src={`/${(form.watch("belt") ?? "WHITE").toLowerCase()}.png`}
+      alt="Current belt"
+      width={80}
+      height={20}
+      className="object-contain"
+    />
+    <div className="text-sm text-slate-600">
+      Current belt:{" "}
+      <span className="font-medium">
+        {form.watch("belt") ?? "WHITE"}
+      </span>
+    </div>
+  </div>
+
+  {/* Belt selector */}
+  <FormField
+    control={form.control}
+    name="belt"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>Select belt</FormLabel>
+        <Select
+          value={field.value ?? "WHITE"}
+          onValueChange={field.onChange}
+        >
+          <SelectTrigger className="w-64">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent position="popper">
+            {BELTS.map((belt) => (
+              <SelectItem key={belt} value={belt}>
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={`/${belt.toLowerCase()}.png`}
+                    alt={belt}
+                    width={50}
+                    height={12}
+                  />
+                  <span>{belt}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </FormItem>
+    )}
+  />
+</section>
+
+        {/* Read-only account info */}
+        <section className="rounded-lg border bg-slate-50 p-4 text-sm text-slate-600 my-5">
+          <p><strong>Email:</strong> {user.email}</p>
+          <p className="mt-1">Membership is managed by your gym.</p>
+        </section>
+
+
+
+        <Button type="submit" className="bg-black text-white cursor-pointer">
+          Save changes
+        </Button>
+   
+      </form>
+    </Form>
+  );
+};

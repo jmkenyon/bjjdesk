@@ -11,19 +11,21 @@ interface PanelItemProps {
   title: string;
   URLOveride?: string;
   gymSlug: string;
+  type: "admin" | "student"
 }
 
 const PanelItem = ({
   icon: Icon,
   title,
   URLOveride,
-  gymSlug
+  gymSlug,
+  type
 }: PanelItemProps) => {
     const pathname = usePathname()
     const active = pathname.endsWith(URLOveride ? URLOveride : title.toLowerCase())
 
   return (
-    <Link href={`${generateTenantURL(gymSlug)}/admin/dashboard/${URLOveride ?? title.toLowerCase()}`}>
+    <Link href={`${generateTenantURL(gymSlug)}/${type}/dashboard/${URLOveride ?? title.toLowerCase()}`}>
       <li className={cn("flex flex-row items-center gap-3 cursor-pointer transition-colors hover:bg-black hover:text-white p-5",
       active && "bg-black font-semibold text-white/90"
 

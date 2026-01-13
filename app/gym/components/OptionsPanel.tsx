@@ -1,60 +1,21 @@
-"use client";
-
-import { PiStudent } from "react-icons/pi";
-import { MdOutlinePayments } from "react-icons/md";
-
-import { BsQrCode } from "react-icons/bs";
-import { CiCreditCard1 } from "react-icons/ci";
-import { FaRegCalendarAlt } from "react-icons/fa";
-import { IoMdInformationCircleOutline } from "react-icons/io";
-import { IoDocumentTextOutline } from "react-icons/io5";
-
-
-import PanelItem from "./PanelItem";
+import { getSession } from "next-auth/react";
+import AdminSidebar from "./AdminSidebar";
+import StudentSidebar from "./StudentSidebar";
 
 interface OptionsPanelProps {
   gymSlug: string;
 }
 
-const OptionsPanel = ({ gymSlug }: OptionsPanelProps) => {
-  return (
-    <section className="md:w-75 border-r-2 border-black h-full shadow-accent bg-blue-400">
-      <ul className="flex flex-col">
-        <PanelItem title="Students" icon={PiStudent} gymSlug={gymSlug} />
-        <PanelItem
-          title="Memberships"
-          icon={MdOutlinePayments}
-          gymSlug={gymSlug}
-        />
-        <PanelItem
-          title="Waiver"
-          icon={IoDocumentTextOutline}
-          gymSlug={gymSlug}
-        />
-        <PanelItem
-          title="QR drop-in"
-          icon={BsQrCode}
-          URLOveride="qr-code"
-          gymSlug={gymSlug}
-        />
-        <PanelItem
-          title="Timetable"
-          icon={FaRegCalendarAlt}
-          gymSlug={gymSlug}
-        />
+const OptionsPanel = async ({ gymSlug }: OptionsPanelProps) => {
+  const session = await getSession();
 
-        <PanelItem
-          title="Subscription"
-          icon={CiCreditCard1}
-          gymSlug={gymSlug}
-        />
-        <PanelItem
-          title="Gym info"
-          URLOveride="information"
-          icon={IoMdInformationCircleOutline}
-          gymSlug={gymSlug}
-        />
-      </ul>
+  return (
+    <section className="md:w-75 border-r-2 border-black  bg-blue-400 h-screen">
+      {session?.user.role === "ADMIN" ? (
+        <AdminSidebar gymSlug={gymSlug} />
+      ) : (
+        <StudentSidebar gymSlug={gymSlug} />
+      )}
     </section>
   );
 };
